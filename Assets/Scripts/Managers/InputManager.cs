@@ -12,6 +12,11 @@ public class InputManager : MonoBehaviour
     { 
         get => _commandedMovement; 
     }
+    private bool _fire;
+    public bool Fire
+    {
+        get => _fire;
+    }
 
     // The Axis names are set based on the Unity Input.GetAxis documenation here:
     // https://docs.unity3d.com/ScriptReference/Input.GetAxis.html
@@ -29,6 +34,7 @@ public class InputManager : MonoBehaviour
     {
         _commandedMovement.x = Input.GetAxis(_horizontalAxis);
         _commandedMovement.y = Input.GetAxis(_verticalAxis);
+        _fire = Input.GetButtonDown("Fire1");
     }
 }
 
