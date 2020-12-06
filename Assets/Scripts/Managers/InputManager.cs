@@ -32,9 +32,9 @@ public class InputManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        _commandedMovement.x = Input.GetAxis(_horizontalAxis);
-        _commandedMovement.y = Input.GetAxis(_verticalAxis);
-        _fire = Input.GetButtonDown("Fire1");
+       // _commandedMovement.x = Input.GetAxis(_horizontalAxis);
+        //_commandedMovement.y = Input.GetAxis(_verticalAxis);
+        //_fire = Input.GetButtonDown("Fire1");
     }
 }
 

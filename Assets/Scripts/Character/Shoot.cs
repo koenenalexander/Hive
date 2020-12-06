@@ -2,20 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Projectile))]
 public class Shoot : MonoBehaviour
 {
-    private Projectile projectile;
+    [SerializeField]
+    private GameObject projectile;
 
     // Start is called before the first frame update
     void Start()
     {
-        projectile = GetComponent<Projectile>();
+        if (projectile == null)
+            Debug.LogError("Shoot.cs - Start() - Shoot must have a projectile assgined in the editor", projectile);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void Fire(Vector2 direction)
     {
-        
+        var shot = Instantiate(projectile, transform.position, transform.rotation);
+        var projectileComponent = shot.GetComponent<Projectile>();
+        projectileComponent.SetDirection(direction);
+        projectileComponent.SetSpeed(.05f);
     }
 }

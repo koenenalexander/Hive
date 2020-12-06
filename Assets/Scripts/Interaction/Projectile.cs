@@ -18,4 +18,13 @@ public class Projectile : MonoBehaviour
     {
         body.position += direction * speed;
     }
+
+    public void SetDirection(Vector2 direction)
+    {
+        this.direction = direction;
+    }
+    public void SetSpeed(float speed)
+    {
+        this.speed = speed;
+    }
 }
