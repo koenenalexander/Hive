@@ -2,16 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Projectile))]
 public class Shoot : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject projectile;
+    private Projectile projectile;
 
     // Start is called before the first frame update
     void Start()
     {
-        if (projectile == null)
-            Debug.LogError("Shoot.cs - Start() - No projectile assigned!", projectile);
+        projectile = GetComponent<Projectile>();
     }
 
     // Update is called once per frame
