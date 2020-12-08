@@ -19,6 +19,5 @@ public class Shoot : MonoBehaviour
         var shot = Instantiate(projectile, transform.position, transform.rotation);
         var projectileComponent = shot.GetComponent<Projectile>();
         projectileComponent.SetDirection(direction);
-        projectileComponent.SetSpeed(.05f);
     }
 }

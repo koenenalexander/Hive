@@ -13,6 +13,7 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour
 {
     private Vector2 _direction;
+    private Vector2 _facing;
     private InputManager input;
     private Rigidbody2D body;
     private Shoot shoot;
@@ -28,6 +29,7 @@ public class Player : MonoBehaviour
         body = GetComponent<Rigidbody2D>();
         shoot = GetComponent<Shoot>();
         _direction = new Vector2(0f, 0f);
+        _facing = new Vector2(1f, 0f);
     }
 
     // Update is called once per frame
@@ -60,10 +62,13 @@ public class Player : MonoBehaviour
         //            Storing the InputValue references somewhere and calling Get<T>()
         //            later does not work correctly.
         _direction = v;
+
+        if (_direction.magnitude != 0)
+            _facing = _direction.normalized;
     }
 
     public void OnFire()
     {
-        shoot.Fire(_direction);
+        shoot.Fire(_facing);
     }
 }
