@@ -8,10 +8,12 @@ public class Projectile : MonoBehaviour
     private float speed = 0.25f;
     private Vector2 direction;
     private Rigidbody2D body;
+    private float timeToExpire = 1f;
     // Start is called before the first frame update
     void Start()
     {
         body = GetComponent<Rigidbody2D>();
+        Destroy(gameObject, timeToExpire);
     }
 
     void FixedUpdate()
