@@ -62,9 +62,23 @@ public class Player : MonoBehaviour
         //            Storing the InputValue references somewhere and calling Get<T>()
         //            later does not work correctly.
         _direction = v;
+    }
 
-        if (_direction.magnitude != 0)
-            _facing = _direction.normalized;
+    public void OnLook(InputValue value)
+    {
+        var v = value.Get<Vector2>();
+        if (v.magnitude != 0)
+            _facing = v.normalized;
+    }
+
+    public void OnMouseMove(InputValue value)
+    {
+        Vector2 v = value.Get<Vector2>();
+        v = Camera.main.ScreenToWorldPoint(v);
+        v.x -= transform.position.x;
+        v.y -= transform.position.y;
+        if (v.magnitude != 0)
+            _facing = v.normalized;
     }
 
     public void OnFire()
