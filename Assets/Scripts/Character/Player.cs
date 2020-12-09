@@ -19,6 +19,7 @@ public class Player : MonoBehaviour
     private Shoot shoot;
     [SerializeField]
     private float speed;
+    private bool syncFacingOnMove;
 
     // Start is called before the first frame update
     void Start()
@@ -30,6 +31,7 @@ public class Player : MonoBehaviour
         shoot = GetComponent<Shoot>();
         _direction = new Vector2(0f, 0f);
         _facing = new Vector2(1f, 0f);
+        syncFacingOnMove = true;
     }
 
     // Update is called once per frame
@@ -62,6 +64,13 @@ public class Player : MonoBehaviour
         //            Storing the InputValue references somewhere and calling Get<T>()
         //            later does not work correctly.
         _direction = v;
+        if (syncFacingOnMove)
+        {
+            var mousePos = Mouse.current.position.ReadValue();
+            var mouseScreenPos = Camera.main.ScreenToWorldPoint(mousePos);
+            _facing = mouseScreenPos - transform.position;
+            _facing.Normalize();
+        }
     }
 
     public void OnLook(InputValue value)
@@ -69,6 +78,7 @@ public class Player : MonoBehaviour
         var v = value.Get<Vector2>();
         if (v.magnitude != 0)
             _facing = v.normalized;
+        syncFacingOnMove = false;
     }
 
     public void OnMouseMove(InputValue value)
@@ -79,6 +89,7 @@ public class Player : MonoBehaviour
         v.y -= transform.position.y;
         if (v.magnitude != 0)
             _facing = v.normalized;
+        syncFacingOnMove = true;
     }
 
     public void OnFire()
