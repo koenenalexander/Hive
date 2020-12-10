@@ -14,9 +14,9 @@ public class Shoot : MonoBehaviour
             Debug.LogError("Shoot.cs - Start() - Shoot must have a projectile assgined in the editor", projectile);
     }
 
-    public void Fire(Vector2 direction)
+    public void Fire(Vector2 direction, Vector3 spawnPoint)
     {
-        var shot = Instantiate(projectile, transform.position, transform.rotation);
+        var shot = Instantiate(projectile, spawnPoint, transform.rotation);
         var projectileComponent = shot.GetComponent<Projectile>();
         projectileComponent.SetDirection(direction);
     }

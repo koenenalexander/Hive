@@ -7,6 +7,9 @@ public class Enemy : MonoBehaviour
 {
     private float shootDelay = 1f;
     private Shoot shoot;
+    [SerializeField]
+    private Transform projectileSpawner;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -22,6 +25,7 @@ public class Enemy : MonoBehaviour
 
     private void FireAtPlayer()
     {
-        shoot.Fire(Vector2.down);
+        shoot.Fire(Vector2.down, projectileSpawner.position);
     }
+
 }

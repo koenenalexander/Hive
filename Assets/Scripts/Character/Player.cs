@@ -18,6 +18,8 @@ public class Player : MonoBehaviour
     private Rigidbody2D body;
     private Shoot shoot;
     [SerializeField]
+    private Transform projectileSpawner;
+    [SerializeField]
     private float speed;
     private bool syncFacingOnMove;
 
@@ -49,7 +51,7 @@ public class Player : MonoBehaviour
     /// </remarks>
     private void FixedUpdate()
     {
-        body.position += (_direction * speed);
+        body.velocity = (_direction * speed);
     }
 
     // If you are interested in the value from the control that triggers an action,
@@ -94,6 +96,6 @@ public class Player : MonoBehaviour
 
     public void OnFire()
     {
-        shoot.Fire(_facing);
+        shoot.Fire(_facing, projectileSpawner.position);
     }
 }
