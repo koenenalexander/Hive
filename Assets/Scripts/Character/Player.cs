@@ -17,11 +17,15 @@ public class Player : MonoBehaviour
     private InputManager input;
     private Rigidbody2D body;
     private Shoot shoot;
+    [Tooltip("Time to wait before allowing another shot")]
+    [SerializeField]
+    private float shootDelay = 0.5f;
+    private bool isShooting = false;
     [SerializeField]
     private Transform projectileSpawner;
     [SerializeField]
     private float speed;
-    private bool syncFacingOnMove;
+    private bool syncFacingOnMove = true; // Assume this must be done until the Player proves otherwise, by using a gamepad
 
     // Start is called before the first frame update
     void Start()
@@ -33,13 +37,6 @@ public class Player : MonoBehaviour
         shoot = GetComponent<Shoot>();
         _direction = new Vector2(0f, 0f);
         _facing = new Vector2(1f, 0f);
-        syncFacingOnMove = true;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     /// <summary>
@@ -100,6 +97,16 @@ public class Player : MonoBehaviour
 
     public void OnFire()
     {
-        shoot.Fire(_facing, projectileSpawner.position);
+        if (!isShooting)
+        {
+            isShooting = true;
+            shoot.Fire(transform.right, projectileSpawner.position);
+            Invoke("ResetShoot", shootDelay);
+        }
+    }
+
+    private void ResetShoot()
+    {
+        isShooting = false;
     }
 }
