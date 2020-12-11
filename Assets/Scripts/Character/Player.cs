@@ -52,6 +52,9 @@ public class Player : MonoBehaviour
     private void FixedUpdate()
     {
         body.velocity = (_direction * speed);
+        var newAngle = Mathf.Atan2(_facing.y, _facing.x) - Mathf.Atan2(transform.forward.y, transform.forward.x);
+        newAngle *= Mathf.Rad2Deg;
+        body.MoveRotation(newAngle);
     }
 
     // If you are interested in the value from the control that triggers an action,
@@ -70,6 +73,7 @@ public class Player : MonoBehaviour
         {
             var mousePos = Mouse.current.position.ReadValue();
             var mouseScreenPos = Camera.main.ScreenToWorldPoint(mousePos);
+            var oldFacing = _facing;
             _facing = mouseScreenPos - transform.position;
             _facing.Normalize();
         }
