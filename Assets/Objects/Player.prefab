@@ -164,6 +164,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectileSpawner: {fileID: 106646497}
+  projectileObject: {fileID: 7479553353741162274, guid: cef0fc4c664952440a726c62fe06c725,
+    type: 3}
   speed: 2
 --- !u!114 &5408900991667626153
 MonoBehaviour:
@@ -177,8 +179,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db9fad11aea8c964cbd05ef8abde2713, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectile: {fileID: 7479553353741162274, guid: cef0fc4c664952440a726c62fe06c725,
-    type: 3}
 --- !u!114 &3148665754142708978
 MonoBehaviour:
   m_ObjectHideFlags: 0

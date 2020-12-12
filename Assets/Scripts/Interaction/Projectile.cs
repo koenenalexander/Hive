@@ -5,10 +5,15 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class Projectile : MonoBehaviour
 {
+    [SerializeField]
     private float speed = 2f;
+    [SerializeField]
+    private float fireDelay = .5f;
     private Vector2 direction;
     private Rigidbody2D body;
     private float timeToExpire = 1f;
+    public float FireDelay => fireDelay;
+
     // Start is called before the first frame update
     void Start()
     {
