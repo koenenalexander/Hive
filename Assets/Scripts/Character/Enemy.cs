@@ -15,6 +15,7 @@ public class Enemy : MonoBehaviour
     private GameObject projectileObject;
     private Projectile projectileComponent;
     private Rigidbody2D body;
+    private Movement mover;
     private enum ENEMY_STATE
     {
         Invalid,
@@ -28,6 +29,7 @@ public class Enemy : MonoBehaviour
     {
         body = GetComponent<Rigidbody2D>();
         shoot = GetComponent<Shoot>();
+        mover = GetComponent<Movement>();
         projectileComponent = projectileObject.GetComponent<Projectile>();
     }
 
@@ -40,6 +42,7 @@ public class Enemy : MonoBehaviour
                 if (CanSeePlayer())
                 {
                     state = ENEMY_STATE.Attacking;
+                    mover.Follow(target, 1f, sightRange / 2);
                     Invoke("FireAtPlayer", projectileComponent.FireDelay);
                 }
                 break;
