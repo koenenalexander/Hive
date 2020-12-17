@@ -9,13 +9,17 @@ public class Enemy : MonoBehaviour
     private Shoot shoot;
     [SerializeField]
     private Transform projectileSpawner;
+    [SerializeField]
     private float sightRange = 1.0f;
     private Transform target;
     [SerializeField]
+    private float targetSpacing = 1f;
+    [SerializeField]
     private GameObject projectileObject;
     private Projectile projectileComponent;
-    private Rigidbody2D body;
     private Movement mover;
+    [SerializeField]
+    private float moveSpeed = 1f;
     private enum ENEMY_STATE
     {
         Invalid,
@@ -27,7 +31,6 @@ public class Enemy : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        body = GetComponent<Rigidbody2D>();
         shoot = GetComponent<Shoot>();
         mover = GetComponent<Movement>();
         projectileComponent = projectileObject.GetComponent<Projectile>();
@@ -42,7 +45,7 @@ public class Enemy : MonoBehaviour
                 if (CanSeePlayer())
                 {
                     state = ENEMY_STATE.Attacking;
-                    mover.Follow(target, 1f, sightRange / 2);
+                    mover.Follow(target, moveSpeed, targetSpacing);
                     Invoke("FireAtPlayer", projectileComponent.FireDelay);
                 }
                 break;

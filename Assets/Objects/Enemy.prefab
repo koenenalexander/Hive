@@ -92,8 +92,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectileSpawner: {fileID: 8897040169176346686}
+  sightRange: 5
+  targetSpacing: 0
   projectileObject: {fileID: 7479553353741162274, guid: cef0fc4c664952440a726c62fe06c725,
     type: 3}
+  moveSpeed: 2
 --- !u!114 &5915879878156765479
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -120,7 +123,7 @@ Rigidbody2D:
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 3
-  m_AngularDrag: 0.05
+  m_AngularDrag: 3
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
