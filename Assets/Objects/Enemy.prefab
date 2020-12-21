@@ -94,6 +94,7 @@ MonoBehaviour:
   projectileSpawner: {fileID: 8897040169176346686}
   projectileObject: {fileID: 7479553353741162274, guid: cef0fc4c664952440a726c62fe06c725,
     type: 3}
+  viewConeSize: 90
 --- !u!114 &5915879878156765479
 MonoBehaviour:
   m_ObjectHideFlags: 0
