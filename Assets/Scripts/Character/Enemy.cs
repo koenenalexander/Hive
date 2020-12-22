@@ -72,11 +72,6 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void SearchForPlayer()
-    {
-
-    }
-
     private void FireAtPlayer()
     {
         shoot.Fire(transform.right.normalized, projectileSpawner.position, projectileObject);
@@ -90,13 +85,12 @@ public class Enemy : MonoBehaviour
     {
         bool playerSpotted = false;
         var startPos = projectileSpawner.position;
-        var adjustmentAngle = GetSearchAdjustmentAngle();
-        Vector3 adjustedTarget = new Vector3();
-        adjustedTarget.x = transform.right.x * Mathf.Cos(Mathf.Deg2Rad * adjustmentAngle) - transform.right.y * Mathf.Sin(Mathf.Deg2Rad * adjustmentAngle);
-        adjustedTarget.y = transform.right.x * Mathf.Sin(Mathf.Deg2Rad * adjustmentAngle) + transform.right.y * Mathf.Cos(Mathf.Deg2Rad * adjustmentAngle);
-        adjustedTarget.z = transform.right.z;
+        var adjustmentAngle = GetSearchAdjustmentAngle() * Mathf.Deg2Rad;
+        var adjustedTarget = RotateVector2D(transform.right, adjustmentAngle);
         var endPos = startPos + adjustedTarget * sightRange;
+
         var ray = Physics2D.Linecast(startPos, endPos, LayerMask.GetMask("Player"));
+
         Debug.DrawLine(startPos, endPos, Color.red, Time.deltaTime);
         if (ray.fraction > 0)
         {
@@ -105,6 +99,12 @@ public class Enemy : MonoBehaviour
         }
         return playerSpotted;
     }
+
+    /// <summary>
+    /// Calculates the angle by which to adjust the
+    /// current search sweep through the enemy view cone
+    /// </summary>
+    /// <returns>Adjustment angle in degrees</returns>
     private int GetSearchAdjustmentAngle()
     {
         int maxDelta = viewConeSize / 2;
@@ -127,5 +127,23 @@ public class Enemy : MonoBehaviour
         }
         currentSearchDelta = adjustmentAngle;
         return adjustmentAngle;
+    }
+
+    /// <summary>
+    /// Calculates a new Vector which is the rotation of
+    /// the provided vector by the provided angle
+    /// </summary>
+    /// <param name="v0">Vector to Rotate</param>
+    /// <param name="angle">Angle, in degrees, to rotate</param>
+    /// <returns>Rotated Vector</returns>
+    private Vector3 RotateVector2D(Vector3 v0, float angle)
+    {
+        // 2D Vector Rotation Formula
+        // x1 = x0*cos(a) - y0*sin(a)
+        // y1 = x0*sin(a) + y0*cos(a)
+        float x1 = v0.x * Mathf.Cos(angle) - v0.y * Mathf.Sin(angle);
+        float y1 = v0.x * Mathf.Sin(angle) + v0.y * Mathf.Cos(angle);
+
+        return new Vector3(x1, y1, v0.z);
     }
 }
