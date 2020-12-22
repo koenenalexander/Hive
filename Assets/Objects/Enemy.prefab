@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1112115683}
   - component: {fileID: 1112115684}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: PersonalSpace
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -56,7 +56,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8897040169176346686}
-  m_Layer: 8
+  m_Layer: 11
   m_Name: ProjectileSpawner
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
@@ -92,7 +92,7 @@ GameObject:
   - component: {fileID: 4936329499683752264}
   - component: {fileID: 491804407196547129}
   - component: {fileID: 4936329499683752265}
-  m_Layer: 8
+  m_Layer: 11
   m_Name: Enemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -144,6 +144,7 @@ MonoBehaviour:
   projectileObject: {fileID: 7479553353741162274, guid: cef0fc4c664952440a726c62fe06c725,
     type: 3}
   viewConeSize: 90
+  speed: 1
 --- !u!114 &5915879878156765479
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -253,7 +254,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7786821304174501159}
   - component: {fileID: 3830726635798587357}
-  m_Layer: 8
+  m_Layer: 11
   m_Name: Facing
   m_TagString: Untagged
   m_Icon: {fileID: 0}

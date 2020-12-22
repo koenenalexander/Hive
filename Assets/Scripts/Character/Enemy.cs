@@ -9,6 +9,7 @@ public class Enemy : MonoBehaviour
     private const string PLAYER = "Player";
     private const string ENEMY = "Enemy";
 
+    private Vector3 startFacing;
     private Shoot shoot;
     [SerializeField]
     private Transform projectileSpawner;
@@ -24,7 +25,10 @@ public class Enemy : MonoBehaviour
     private int viewConeSize = 90; // Degrees
     private int searchAngleDelta = 15; // allows for control over precision of search for target
     private int currentSearchDelta = 0;
+    [SerializeField]
+    private float speed = 2f;
     private List<Enemy> allies = new List<Enemy>();
+    private Enemy leader = null;
     private enum TARGET_SEARCH_DIRECTION
     {
         Clockwise,
@@ -46,6 +50,7 @@ public class Enemy : MonoBehaviour
         shoot = GetComponent<Shoot>();
         mover = GetComponent<Movement>();
         projectileComponent = projectileObject.GetComponent<Projectile>();
+        startFacing = transform.right;
     }
 
     // Update is called once per frame
@@ -56,10 +61,16 @@ public class Enemy : MonoBehaviour
             case ENEMY_STATE.Idle:
                 if (!HasTarget)
                     SetTarget(FindPlayer());
+                else if (TargetLost())
+                {
+                    mover.StopMoving();
+                    leader = null;
+                    target = null;
+                }
                 else
                 {
                     state = ENEMY_STATE.Attacking;
-                    mover.Follow(target, 1f, sightRange / 2);
+                    mover.Follow(target, speed, sightRange / 2);
                     Invoke("FireAtPlayer", projectileComponent.FireDelay);
                 }
                 break;
@@ -76,6 +87,12 @@ public class Enemy : MonoBehaviour
         {
             transform.right = target.position - transform.position;
         }
+        else if (body.velocity.magnitude > 0.01)
+        {
+            transform.right = body.velocity.normalized;
+        }
+        else
+            transform.right = startFacing;
     }
 
     private void FireAtPlayer()
@@ -172,12 +189,16 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void SetTarget(Transform transform)
+    private void SetTarget(Transform transform, Enemy caller = null)
     {
         if (transform != null)
         {
             target = transform;
             CalloutTarget(transform);
+
+            // Make the target caller the leader
+            if (caller != null && leader == null)
+                leader = caller;
         }
     }
 
@@ -186,7 +207,33 @@ public class Enemy : MonoBehaviour
         foreach (var ally in allies)
         {
             if (!ally.HasTarget)
-                ally.SetTarget(transform);
+                ally.SetTarget(transform, this);
         }
+    }
+
+    private void OnDestroy()
+    {
+        
+    }
+
+    private void CallForHelp()
+    {
+        foreach (var ally in allies)
+        {
+            if (!ally.HasTarget)
+                ally.SearchLocation(transform.position);
+        }
+    }
+    private void SearchLocation(Vector3 pos)
+    {
+
+    }
+
+    private bool TargetLost()
+    {
+        var difference = target.position - transform.position;
+        if (leader != null)
+            difference = target.position - leader.transform.position;
+        return difference.magnitude > sightRange * 2;
     }
 }
