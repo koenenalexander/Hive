@@ -83,19 +83,22 @@ public class Enemy : MonoBehaviour
     }
     private bool CanSeePlayer()
     {
-        bool playerSpotted = false;
-        var startPos = projectileSpawner.position;
-        var adjustmentAngle = GetSearchAdjustmentAngle() * Mathf.Deg2Rad;
-        var adjustedTarget = RotateVector2D(transform.right, adjustmentAngle);
-        var endPos = startPos + adjustedTarget * sightRange;
-
-        var ray = Physics2D.Linecast(startPos, endPos, LayerMask.GetMask("Player"));
-
-        Debug.DrawLine(startPos, endPos, Color.red, Time.deltaTime);
-        if (ray.fraction > 0)
+        bool playerSpotted = target != null;
+        if (!playerSpotted)
         {
-            playerSpotted = true;
-            target = ray.transform;
+            var startPos = projectileSpawner.position;
+            var adjustmentAngle = GetSearchAdjustmentAngle() * Mathf.Deg2Rad;
+            var adjustedTarget = RotateVector2D(transform.right, adjustmentAngle);
+            var endPos = startPos + adjustedTarget * sightRange;
+
+            var ray = Physics2D.Linecast(startPos, endPos, LayerMask.GetMask("Player"));
+
+            Debug.DrawLine(startPos, endPos, Color.red, Time.deltaTime);
+            if (ray.fraction > 0)
+            {
+                playerSpotted = true;
+                target = ray.transform;
+            }
         }
         return playerSpotted;
     }
@@ -145,5 +148,16 @@ public class Enemy : MonoBehaviour
         float y1 = v0.x * Mathf.Sin(angle) + v0.y * Mathf.Cos(angle);
 
         return new Vector3(x1, y1, v0.z);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player"))
+            SetTarget(collision.transform);
+    }
+
+    private void SetTarget(Transform transform)
+    {
+        target = transform;
     }
 }
