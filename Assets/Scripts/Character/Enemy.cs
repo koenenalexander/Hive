@@ -6,11 +6,15 @@ using UnityEngine;
 [RequireComponent(typeof(Shoot))]
 public class Enemy : MonoBehaviour
 {
+    private const string PLAYER = "Player";
+    private const string ENEMY = "Enemy";
+
     private Shoot shoot;
     [SerializeField]
     private Transform projectileSpawner;
     private float sightRange = 1.0f;
     private Transform target;
+    private bool HasTarget => target != null;
     [SerializeField]
     private GameObject projectileObject;
     private Projectile projectileComponent;
@@ -20,6 +24,7 @@ public class Enemy : MonoBehaviour
     private int viewConeSize = 90; // Degrees
     private int searchAngleDelta = 15; // allows for control over precision of search for target
     private int currentSearchDelta = 0;
+    private List<Enemy> allies = new List<Enemy>();
     private enum TARGET_SEARCH_DIRECTION
     {
         Clockwise,
@@ -49,7 +54,9 @@ public class Enemy : MonoBehaviour
         switch(state)
         {
             case ENEMY_STATE.Idle:
-                if (CanSeePlayer())
+                if (!HasTarget)
+                    SetTarget(FindPlayer());
+                else
                 {
                     state = ENEMY_STATE.Attacking;
                     mover.Follow(target, 1f, sightRange / 2);
@@ -57,7 +64,6 @@ public class Enemy : MonoBehaviour
                 }
                 break;
             case ENEMY_STATE.Attacking:
-                
                 break;
             default:
                 break;
@@ -81,26 +87,22 @@ public class Enemy : MonoBehaviour
     {
         state = ENEMY_STATE.Idle;
     }
-    private bool CanSeePlayer()
+    private Transform FindPlayer()
     {
-        bool playerSpotted = target != null;
-        if (!playerSpotted)
-        {
-            var startPos = projectileSpawner.position;
-            var adjustmentAngle = GetSearchAdjustmentAngle() * Mathf.Deg2Rad;
-            var adjustedTarget = RotateVector2D(transform.right, adjustmentAngle);
-            var endPos = startPos + adjustedTarget * sightRange;
+       Transform player = null;
+       var startPos = projectileSpawner.position;
+       var adjustmentAngle = GetSearchAdjustmentAngle() * Mathf.Deg2Rad;
+       var adjustedTarget = RotateVector2D(transform.right, adjustmentAngle);
+       var endPos = startPos + adjustedTarget * sightRange;
 
-            var ray = Physics2D.Linecast(startPos, endPos, LayerMask.GetMask("Player"));
+       var ray = Physics2D.Linecast(startPos, endPos, LayerMask.GetMask("Player"));
 
-            Debug.DrawLine(startPos, endPos, Color.red, Time.deltaTime);
-            if (ray.fraction > 0)
-            {
-                playerSpotted = true;
-                target = ray.transform;
-            }
-        }
-        return playerSpotted;
+       Debug.DrawLine(startPos, endPos, Color.red, Time.deltaTime);
+       if (ray.fraction > 0)
+       {
+            player = ray.transform;
+       }
+        return player;
     }
 
     /// <summary>
@@ -152,12 +154,39 @@ public class Enemy : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if (collision.CompareTag(PLAYER))
             SetTarget(collision.transform);
+        else if (collision.CompareTag(ENEMY))
+        {
+            // Save reference to enemy for coordination manuevers
+            allies.Add(collision.gameObject.GetComponent<Enemy>());
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag(ENEMY))
+        {
+            var enemy = collision.gameObject.GetComponent<Enemy>();
+            if (allies.Contains(enemy))
+                allies.Remove(enemy);
+        }
     }
 
     private void SetTarget(Transform transform)
     {
-        target = transform;
+        if (transform != null)
+        {
+            target = transform;
+            CalloutTarget(transform);
+        }
+    }
+
+    private void CalloutTarget(Transform transform)
+    {
+        foreach (var ally in allies)
+        {
+            if (!ally.HasTarget)
+                ally.SetTarget(transform);
+        }
     }
 }
