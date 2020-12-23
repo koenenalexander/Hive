@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static VectorMath;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Shoot))]
@@ -61,7 +62,18 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        switch(state)
+        if (target != null)
+        {
+            transform.right = target.position - transform.position;
+        }
+        else if (body.velocity.magnitude > 0.001)
+        {
+            transform.right = body.velocity.normalized;
+        }
+        else
+            transform.right = startFacing;
+
+        switch (state)
         {
             case ENEMY_STATE.Idle:
                 if (!HasTarget)
@@ -84,20 +96,6 @@ public class Enemy : MonoBehaviour
             default:
                 break;
         }
-    }
-
-    private void FixedUpdate()
-    {
-        if (target != null)
-        {
-            transform.right = target.position - transform.position;
-        }
-        else if (body.velocity.magnitude > 0.01)
-        {
-            transform.right = body.velocity.normalized;
-        }
-        else
-            transform.right = startFacing;
     }
 
     private void FireAtPlayer()
@@ -154,24 +152,6 @@ public class Enemy : MonoBehaviour
         }
         currentSearchDelta = adjustmentAngle;
         return adjustmentAngle;
-    }
-
-    /// <summary>
-    /// Calculates a new Vector which is the rotation of
-    /// the provided vector by the provided angle
-    /// </summary>
-    /// <param name="v0">Vector to Rotate</param>
-    /// <param name="angle">Angle, in degrees, to rotate</param>
-    /// <returns>Rotated Vector</returns>
-    private Vector3 RotateVector2D(Vector3 v0, float angle)
-    {
-        // 2D Vector Rotation Formula
-        // x1 = x0*cos(a) - y0*sin(a)
-        // y1 = x0*sin(a) + y0*cos(a)
-        float x1 = v0.x * Mathf.Cos(angle) - v0.y * Mathf.Sin(angle);
-        float y1 = v0.x * Mathf.Sin(angle) + v0.y * Mathf.Cos(angle);
-
-        return new Vector3(x1, y1, v0.z);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

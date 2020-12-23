@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static VectorMath;
 
 public class Movement : MonoBehaviour
 {
@@ -61,7 +62,7 @@ public class Movement : MonoBehaviour
             bool withinRange = deltaPos.magnitude < searchRadius;
             if (withinRange)
             {
-                body.velocity = GetArcMovement(deltaPos);
+                body.velocity = RotateBy90(deltaPos);
             }
             else
             {
@@ -78,11 +79,5 @@ public class Movement : MonoBehaviour
             else
                 body.velocity = Vector2.zero;
         }
-    }
-
-    private Vector2 GetArcMovement(Vector2 searchVector)
-    {
-        Vector2 arcMovement = new Vector2(searchVector.y, -1 * searchVector.x);
-        return arcMovement;
     }
 }
