@@ -33,7 +33,11 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Destroy(collision.gameObject);
+        var handler = collision.gameObject.GetComponent<DamageHandler>();
+        if (handler != null)
+        {
+            handler.Damage(1);
+        }
         Destroy(gameObject, .2f);
     }
 }

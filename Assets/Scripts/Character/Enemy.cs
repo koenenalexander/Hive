@@ -4,6 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Shoot))]
+[RequireComponent(typeof(DamageHandler))]
 public class Enemy : MonoBehaviour
 {
     private const string PLAYER = "Player";
@@ -42,6 +43,7 @@ public class Enemy : MonoBehaviour
         Attacking
     }
     private ENEMY_STATE state = ENEMY_STATE.Idle;
+    private DamageHandler damageHandler;
 
     // Start is called before the first frame update
     void Start()
@@ -49,8 +51,11 @@ public class Enemy : MonoBehaviour
         body = GetComponent<Rigidbody2D>();
         shoot = GetComponent<Shoot>();
         mover = GetComponent<Movement>();
+        mover.SetSpeed(speed);
         projectileComponent = projectileObject.GetComponent<Projectile>();
         startFacing = transform.right;
+        damageHandler = GetComponent<DamageHandler>();
+        damageHandler.AddHandler(Damage);
     }
 
     // Update is called once per frame
@@ -70,7 +75,7 @@ public class Enemy : MonoBehaviour
                 else
                 {
                     state = ENEMY_STATE.Attacking;
-                    mover.Follow(target, speed, sightRange / 2);
+                    mover.Follow(target, sightRange / 2);
                     Invoke("FireAtPlayer", projectileComponent.FireDelay);
                 }
                 break;
@@ -211,11 +216,6 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void OnDestroy()
-    {
-        
-    }
-
     private void CallForHelp()
     {
         foreach (var ally in allies)
@@ -226,7 +226,7 @@ public class Enemy : MonoBehaviour
     }
     private void SearchLocation(Vector3 pos)
     {
-
+        mover.Search(pos, sightRange);
     }
 
     private bool TargetLost()
@@ -235,5 +235,11 @@ public class Enemy : MonoBehaviour
         if (leader != null)
             difference = target.position - leader.transform.position;
         return difference.magnitude > sightRange * 2;
+    }
+
+    private void Damage(int damage)
+    {
+        CallForHelp();
+        Destroy(gameObject);
     }
 }

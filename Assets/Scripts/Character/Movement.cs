@@ -12,6 +12,7 @@ public class Movement : MonoBehaviour
     private Vector3 startPos;
     private Vector3 targetSearchPos = Vector3.negativeInfinity;
     private bool HasTargetSearchPos => targetSearchPos.x > float.NegativeInfinity;
+    private float searchRadius = 0;
     private Rigidbody2D body;
 
     private void Start()
@@ -19,16 +20,24 @@ public class Movement : MonoBehaviour
         startPos = transform.position;
         body = GetComponent<Rigidbody2D>();
     }
-    public void Follow(Transform target, float speed, float range = 0.0f)
+    public void Follow(Transform target, float range = 0.0f)
     {
         this.target = target;
-        maxSpeed = speed;
         keepAtDistance = range;
     }
-
+    public void SetSpeed(float speed)
+    {
+        maxSpeed = speed;
+    }
     public void StopMoving()
     {
         this.target = null;
+    }
+
+    public void Search(Vector3 searchPos, float radius)
+    {
+        targetSearchPos = searchPos;
+        searchRadius = radius;
     }
 
     private void FixedUpdate()
@@ -48,7 +57,17 @@ public class Movement : MonoBehaviour
         }
         else if (HasTargetSearchPos)
         {
-            body.velocity = Vector2.zero;
+            var deltaPos = targetSearchPos - transform.position;
+            bool withinRange = deltaPos.magnitude < searchRadius;
+            if (withinRange)
+            {
+                body.velocity = GetArcMovement(deltaPos);
+            }
+            else
+            {
+                body.velocity = deltaPos.normalized * maxSpeed;
+            }
+            
         }
         // No target, return to starting point
         else
@@ -59,5 +78,11 @@ public class Movement : MonoBehaviour
             else
                 body.velocity = Vector2.zero;
         }
+    }
+
+    private Vector2 GetArcMovement(Vector2 searchVector)
+    {
+        Vector2 arcMovement = new Vector2(searchVector.y, -1 * searchVector.x);
+        return arcMovement;
     }
 }
