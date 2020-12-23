@@ -14,8 +14,8 @@ public class Movement : MonoBehaviour
     private Vector3 targetSearchPos = Vector3.negativeInfinity;
     private bool HasTargetSearchPos => targetSearchPos.x > float.NegativeInfinity;
     private float searchRadius = 0;
+    private bool withinSearchRange = false;
     private Rigidbody2D body;
-
     private void Start()
     {
         startPos = transform.position;
@@ -58,17 +58,7 @@ public class Movement : MonoBehaviour
         }
         else if (HasTargetSearchPos)
         {
-            var deltaPos = targetSearchPos - transform.position;
-            bool withinRange = deltaPos.magnitude < searchRadius;
-            if (withinRange)
-            {
-                body.velocity = RotateBy90(deltaPos);
-            }
-            else
-            {
-                body.velocity = deltaPos.normalized * maxSpeed;
-            }
-            
+            body.velocity = GetSearchVector(targetSearchPos, transform.position, searchRadius);
         }
         // No target, return to starting point
         else
@@ -79,5 +69,29 @@ public class Movement : MonoBehaviour
             else
                 body.velocity = Vector2.zero;
         }
+    }
+
+    private Vector2 GetSearchVector(
+        Vector3 searchPos, 
+        Vector3 targetPos,
+        float radius)
+    {
+        Vector2 searchVector = Vector2.zero;
+        var deltaPos = searchPos - targetPos;
+        bool withinRange = deltaPos.magnitude < searchRadius ||
+            (withinSearchRange && deltaPos.magnitude < searchRadius * 1.2f);
+        if (withinRange)
+        {
+            searchVector = RotateBy90(deltaPos);
+        }
+        else
+        {
+            searchVector = deltaPos.normalized * maxSpeed;
+        }
+        bool failedToFind = withinSearchRange && !withinRange;
+        withinSearchRange = withinRange;
+        if (failedToFind)
+            targetSearchPos = Vector3.negativeInfinity;
+        return searchVector;
     }
 }
